@@ -19,17 +19,40 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.Navigator
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import org.koin.compose.KoinContext
+import androidx.navigation.compose.composable
 import screens.Favourite
-import screens.home.Home
 import screens.Profile
 import screens.Settings
+import screens.home.Home
 
 @Composable
 fun App() {
-    val screens = listOf("Home", "Favourite", "Profile","Settings",)
+    val screens = listOf("Home", "Favourite", "Profile", "Settings")
     var selectedScreen by remember { mutableStateOf(screens.firstOrNull()) }
     MaterialTheme {
+        KoinContext {
+            NavHost(
+                navController = rememberNavController(),
+                startDestination = "Home"
+            ) {
+                composable("Home") {
+                    Home()
+                }
+                composable("Favourite") {
+                    Favourite()
+                }
+                composable("Profile") {
+                    Profile()
+                }
+                composable("Settings") {
+                    Settings()
+                }
+            }
+        }
+
         Scaffold(
             bottomBar = {
                 BottomNavigation(backgroundColor = Color.White) {
@@ -45,31 +68,10 @@ fun App() {
                 }
             },
             content = {
-                if (selectedScreen == "Home") HomeScreen() else if (selectedScreen == "Favourite") FavouriteScreen() else if (selectedScreen == "Profile") UserProfileScreen() else SettingsScreen()
+                if (selectedScreen == "Home") Home() else if (selectedScreen == "Favourite") Favourite() else if (selectedScreen == "Profile") Profile() else Settings()
             }
         )
     }
-}
-
-@Composable
-fun HomeScreen() {
-    Navigator(Home())
-}
-
-@Composable
-fun UserProfileScreen() {
-    Navigator(Profile())
-}
-
-
-@Composable
-fun FavouriteScreen() {
-    Navigator(Favourite())
-}
-
-@Composable
-fun SettingsScreen() {
-    Navigator(Settings())
 }
 
 @Composable

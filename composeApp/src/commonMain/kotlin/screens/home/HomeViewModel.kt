@@ -1,23 +1,20 @@
 package screens.home
 
 import androidx.compose.runtime.mutableStateOf
-import cafe.adriel.voyager.core.model.ScreenModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import data.response.SampleDataItem
 import data.service.ISampleService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlin.coroutines.CoroutineContext
 
-class HomeViewModel(private val sampleService: ISampleService) : ScreenModel {
+class HomeViewModel(private val sampleService: ISampleService) : ViewModel() {
 
-    private val job = SupervisorJob()
-    private val coroutineContext: CoroutineContext = job + Dispatchers.IO
-    private val viewModelScope = CoroutineScope(coroutineContext)
     val sampleData = mutableListOf<SampleDataItem>()
     val homeViewState = mutableStateOf<HomeViewState>(HomeViewState.Loading)
+
+    init {
+        getSampleData()
+    }
 
     fun getSampleData() {
         viewModelScope.launch {

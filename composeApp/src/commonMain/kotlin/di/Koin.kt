@@ -10,14 +10,17 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.context.startKoin
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import screens.home.HomeViewModel
 
-fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
+fun initKoin(appDeclaration: KoinAppDeclaration? = null) =
     startKoin {
-        appDeclaration()
+        appDeclaration?.invoke(this)
         modules(ktorModule, repositoryModule, viewModelModule)
     }
 
@@ -43,13 +46,10 @@ val ktorModule = module {
 }
 
 val repositoryModule = module {
-    single<ISampleRepository> { SampleRepositoryImpl(get()) }
-    single<ISampleService> { SampleService(get(), get()) }
+    singleOf(::SampleRepositoryImpl).bind<ISampleRepository>()
+    singleOf(::SampleService).bind<ISampleService>()
 }
 
 val viewModelModule = module {
-    factory { HomeViewModel(get()) }
+    viewModelOf(::HomeViewModel)
 }
-
-//using in iOS
-fun initKoin() = initKoin {}
