@@ -22,13 +22,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    val context = LocalContext.current.applicationContext
-    val batteryManager = remember {
-        BatteryManager(context)
-    }
-    App()
-}

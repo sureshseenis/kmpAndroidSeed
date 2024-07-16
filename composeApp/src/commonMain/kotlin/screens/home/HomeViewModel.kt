@@ -2,25 +2,27 @@ package screens.home
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import data.response.SampleDataItem
+import data.service.ISampleRepository
 import data.service.ISampleService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlin.coroutines.CoroutineContext
 
-class HomeViewModel(private val sampleService: ISampleService) : ViewModel() {
-
-    val sampleData = mutableListOf<SampleDataItem>()
+class HomeViewModel(private val iSampleRepository: ISampleRepository) : ViewModel() {
+    private val job = SupervisorJob()
+    private val coroutineContext: CoroutineContext = job + Dispatchers.IO
+    private val coroutineScope = CoroutineScope(coroutineContext)
     val homeViewState = mutableStateOf<HomeViewState>(HomeViewState.Loading)
 
-    init {
-        getSampleData()
-    }
-
     fun getSampleData() {
-        viewModelScope.launch {
+        coroutineScope.launch {
             try {
-                val sampleDataResonse = sampleService.fetchSampleData()
-                homeViewState.value = HomeViewState.Success(dataItem = sampleDataResonse)
+                val sampleDataResponse = iSampleRepository.fetchSampleData()
+                homeViewState.value = HomeViewState.Success(dataItem = sampleDataResponse)
             } catch (e: Exception) {
                 e.printStackTrace()
                 homeViewState.value = HomeViewState.Failure(e.message.toString())

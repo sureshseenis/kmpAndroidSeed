@@ -58,8 +58,9 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
-            implementation(libs.lifecycle.viewmodel)
+           // implementation(libs.lifecycle.viewmodel)
             implementation(libs.navigation.compose)
+            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

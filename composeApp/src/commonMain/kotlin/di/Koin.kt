@@ -1,7 +1,9 @@
 package di
 
+import androidx.lifecycle.ViewModel
 import data.service.ISampleRepository
 import data.service.ISampleService
+import data.service.SampleRepository
 import data.service.SampleRepositoryImpl
 import data.service.SampleService
 import io.ktor.client.HttpClient
@@ -10,17 +12,14 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.context.startKoin
-import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
-import org.koin.dsl.bind
 import org.koin.dsl.module
 import screens.home.HomeViewModel
 
-fun initKoin(appDeclaration: KoinAppDeclaration? = null) =
+fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
-        appDeclaration?.invoke(this)
+        appDeclaration()
         modules(ktorModule, repositoryModule, viewModelModule)
     }
 
@@ -46,10 +45,13 @@ val ktorModule = module {
 }
 
 val repositoryModule = module {
-    singleOf(::SampleRepositoryImpl).bind<ISampleRepository>()
-    singleOf(::SampleService).bind<ISampleService>()
+    single<ISampleRepository> { SampleRepositoryImpl(sampleApi = get()) }
+    single<ISampleService> { SampleService(baseUrl = get(), client = get()) }
 }
 
 val viewModelModule = module {
-    viewModelOf(::HomeViewModel)
+    factory{ HomeViewModel(iSampleRepository = get()) }
 }
+
+//using in iOS
+fun initKoin() = initKoin {}
