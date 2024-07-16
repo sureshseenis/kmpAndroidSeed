@@ -1,5 +1,9 @@
 package di
 
+import data.service.ISampleRepository
+import data.service.ISampleService
+import data.service.SampleRepositoryImpl
+import data.service.SampleService
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -9,11 +13,12 @@ import kotlinx.serialization.json.Json
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
+import screens.home.HomeViewModel
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
         appDeclaration()
-        modules(ktorModule)
+        modules(ktorModule, repositoryModule, viewModelModule)
     }
 
 val ktorModule = module {
@@ -34,7 +39,16 @@ val ktorModule = module {
         }
     }
 
-    single { "https://newsapi.org/v2" }
+    single { "https://jsonplaceholder.typicode.com/" }
+}
+
+val repositoryModule = module {
+    single<ISampleRepository> { SampleRepositoryImpl(get()) }
+    single<ISampleService> { SampleService(get(), get()) }
+}
+
+val viewModelModule = module {
+    factory { HomeViewModel(get()) }
 }
 
 //using in iOS
