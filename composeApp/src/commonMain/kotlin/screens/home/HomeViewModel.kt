@@ -2,9 +2,7 @@ package screens.home
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import data.response.SampleDataItem
 import data.service.ISampleRepository
-import data.service.ISampleService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

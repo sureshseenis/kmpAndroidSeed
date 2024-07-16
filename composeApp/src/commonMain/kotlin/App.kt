@@ -35,7 +35,7 @@ fun App() {
     MaterialTheme {
         KoinContext {
             NavHost(
-                navController = rememberNavController(),
+                navController  = rememberNavController(),
                 startDestination = "Home"
             ) {
                 composable("Home") {

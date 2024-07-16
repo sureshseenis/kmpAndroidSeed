@@ -58,9 +58,13 @@ kotlin {
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
-           // implementation(libs.lifecycle.viewmodel)
+            implementation(libs.lifecycle.viewmodel)
             implementation(libs.navigation.compose)
-            implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+
+            //Image loader
+            implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha06")
+            implementation("io.coil-kt.coil3:coil-network-ktor:3.0.0-alpha06")
+          //  implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
