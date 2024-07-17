@@ -8,3 +8,7 @@ class SampleRepositoryImpl(private val sampleApi: ISampleService): ISampleReposi
       return sampleApi.fetchSampleData()
     }
 }
+
+interface ISampleRepository {
+    suspend fun fetchSampleData(): ArrayList<SampleDataItem>
+}

@@ -8,3 +8,7 @@ import io.ktor.client.request.get
 class SampleService(private val baseUrl: String, private val client: HttpClient) : ISampleService{
     override suspend fun fetchSampleData(): ArrayList<SampleDataItem> = client.get(baseUrl+"albums/1/photos").body()
 }
+
+interface ISampleService {
+    suspend fun fetchSampleData(): ArrayList<SampleDataItem>
+}

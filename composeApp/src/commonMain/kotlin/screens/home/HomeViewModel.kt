@@ -17,14 +17,19 @@ class HomeViewModel(private val iSampleRepository: ISampleRepository) : ViewMode
     val homeViewState = mutableStateOf<HomeViewState>(HomeViewState.Loading)
 
     fun getSampleData() {
-        coroutineScope.launch {
-            try {
-                val sampleDataResponse = iSampleRepository.fetchSampleData()
-                homeViewState.value = HomeViewState.Success(dataItem = sampleDataResponse)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                homeViewState.value = HomeViewState.Failure(e.message.toString())
+        try {
+            coroutineScope.launch {
+                try {
+                    val sampleDataResponse = iSampleRepository.fetchSampleData()
+                    homeViewState.value = HomeViewState.Success(dataItem = sampleDataResponse)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    homeViewState.value = HomeViewState.Failure(e.message.toString())
+                }
             }
+        }catch (ex: Exception){
+            ex.printStackTrace()
+            homeViewState.value = HomeViewState.Failure(ex.message.toString())
         }
     }
 }

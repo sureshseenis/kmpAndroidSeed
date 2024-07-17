@@ -54,7 +54,7 @@ kotlin {
             implementation(libs.bundles.ktor)
 
             //koin
-            implementation(libs.koin.core)
+            api(libs.koin.core)
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
 
@@ -62,15 +62,16 @@ kotlin {
             implementation(libs.navigation.compose)
 
             //Image loader
-            implementation("io.coil-kt.coil3:coil-compose:3.0.0-alpha06")
-            implementation("io.coil-kt.coil3:coil-network-ktor:3.0.0-alpha06")
-          //  implementation("org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose:2.8.0")
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
 
             //ktor okhttp
             implementation(libs.ktor.client.okhttp)
+            //Coil issue
+            implementation(libs.kotlinx.coroutines.swing)
         }
     }
 }

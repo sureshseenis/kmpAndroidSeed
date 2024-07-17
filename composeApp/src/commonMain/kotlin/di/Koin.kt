@@ -1,9 +1,7 @@
 package di
 
-import androidx.lifecycle.ViewModel
 import data.service.ISampleRepository
 import data.service.ISampleService
-import data.service.SampleRepository
 import data.service.SampleRepositoryImpl
 import data.service.SampleService
 import io.ktor.client.HttpClient
@@ -12,8 +10,12 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import org.koin.compose.viewmodel.dsl.viewModelOf
 import org.koin.core.context.startKoin
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.KoinAppDeclaration
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import screens.home.HomeViewModel
 
@@ -44,13 +46,13 @@ val ktorModule = module {
     single { "https://jsonplaceholder.typicode.com/" }
 }
 
-val repositoryModule = module {
-    single<ISampleRepository> { SampleRepositoryImpl(sampleApi = get()) }
-    single<ISampleService> { SampleService(baseUrl = get(), client = get()) }
+val repositoryModule: Module = module {
+    singleOf(::SampleRepositoryImpl).bind<ISampleRepository>()
+    singleOf(::SampleService).bind<ISampleService>()
 }
 
-val viewModelModule = module {
-    factory{ HomeViewModel(iSampleRepository = get()) }
+val viewModelModule: Module = module {
+    viewModelOf(::HomeViewModel).bind()
 }
 
 //using in iOS
