@@ -87,8 +87,37 @@ fun Loading() {
 fun Success(dataItem: ArrayList<SampleDataItem>) {
     Box(modifier = Modifier.fillMaxSize()) {
         Column(Modifier.fillMaxWidth()) {
-            TopNewsPager(dataItem, onItemClick = {
-            })
+            Row(modifier = Modifier.fillMaxWidth()) {
+                TopNewsPager(dataItem, onItemClick = {
+                })
+            }
+            Row(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
+                Text("Sample Data")
+            }
+            Row {
+                LazyColumn(Modifier.fillMaxWidth().padding(4.dp)) {
+                    items(dataItem.size) { index ->
+                        Card(
+                            modifier = Modifier.fillMaxWidth().padding(4.dp),
+                            elevation = 4.dp,
+                            border = BorderStroke(1.dp, Color.Black)
+                        ) {
+                            Column(Modifier.fillMaxWidth()) {
+                                Image(
+                                    painter = rememberAsyncImagePainter(dataItem[index].url),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.fillMaxWidth().height(150.dp)
+                                )
+                                Text(
+                                    text = dataItem[index].title.toString(),
+                                    modifier = Modifier.fillMaxWidth().padding(4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -98,16 +127,10 @@ fun Success(dataItem: ArrayList<SampleDataItem>) {
 fun TopNewsPager(sampleData: List<SampleDataItem>, onItemClick: (String) -> Unit) {
     val pagerState = rememberPagerState() { sampleData.take(7).size }
     Column {
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            "Breaking News",
-            modifier = Modifier.padding(10.dp),
-            style = TextStyle(fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 21.sp)
-        )
         Spacer(modifier = Modifier.height(16.dp))
         HorizontalPager(
             state = pagerState, modifier = Modifier.fillMaxWidth(),
-            pageSpacing = 20.dp, contentPadding = PaddingValues(horizontal = 30.dp)
+            pageSpacing = 10.dp, contentPadding = PaddingValues(horizontal = 10.dp)
         ) { page ->
             val item = sampleData[page]
             Box(modifier = Modifier.clickable { onItemClick(item.url.orEmpty()) }) {
@@ -152,7 +175,7 @@ fun TopNewsPager(sampleData: List<SampleDataItem>, onItemClick: (String) -> Unit
         }
         Row(
             Modifier
-                .height(50.dp)
+                .height(20.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
@@ -171,12 +194,6 @@ fun TopNewsPager(sampleData: List<SampleDataItem>, onItemClick: (String) -> Unit
                 )
             }
         }
-        Spacer(modifier = Modifier.height(6.dp))
-        Text(
-            "Recommendation",
-            modifier = Modifier.padding(10.dp),
-            style = TextStyle(fontWeight = FontWeight.Bold, color = Color.Black)
-        )
         Spacer(modifier = Modifier.height(6.dp))
     }
 }
