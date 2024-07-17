@@ -86,29 +86,9 @@ fun Loading() {
 @Composable
 fun Success(dataItem: ArrayList<SampleDataItem>) {
     Box(modifier = Modifier.fillMaxSize()) {
-        LazyColumn(Modifier.fillMaxWidth().padding(4.dp)) {
-            items(dataItem.size) { index ->
-                Card(
-                    modifier = Modifier.fillMaxWidth().padding(4.dp),
-                    elevation = 4.dp,
-                    border = BorderStroke(1.dp, Color.Black)
-                ) {
-                    Column(Modifier.fillMaxWidth()) {
-                        TopNewsPager(dataItem, onItemClick = {
-                        })
-                        /*Image(
-                            painter = rememberAsyncImagePainter(dataItem[index].url),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxWidth().height(150.dp)
-                        )
-                        Text(
-                            text = dataItem[index].title.toString(),
-                            modifier = Modifier.fillMaxWidth().padding(4.dp)
-                        )*/
-                    }
-                }
-            }
+        Column(Modifier.fillMaxWidth()) {
+            TopNewsPager(dataItem, onItemClick = {
+            })
         }
     }
 }
