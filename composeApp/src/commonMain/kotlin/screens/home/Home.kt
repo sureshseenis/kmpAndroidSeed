@@ -95,7 +95,6 @@ fun Success(dataItem: ArrayList<SampleDataItem>) {
                 ) {
                     Column(Modifier.fillMaxWidth()) {
                         TopNewsPager(dataItem, onItemClick = {
-
                         })
                         /*Image(
                             painter = rememberAsyncImagePainter(dataItem[index].url),
