@@ -1,0 +1,30 @@
+fun configureProxyFromApn(context: Context) {
+    try {
+        val uri = Uri.parse("content://telephony/carriers/preferapn")
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val proxy = it.getString(it.getColumnIndex("proxy"))
+                val port = it.getString(it.getColumnIndex("port"))
+
+                if (!proxy.isNullOrEmpty() && !port.isNullOrEmpty()) {
+                    System.setProperty("http.proxyHost", proxy)
+                    System.setProperty("http.proxyPort", port)
+                    System.setProperty("https.proxyHost", proxy)
+                    System.setProperty("https.proxyPort", port)
+
+                    // Optional: if proxy needs auth
+                    System.setProperty("http.proxyUser", "your_username")
+                    System.setProperty("http.proxyPassword", "your_password")
+
+                    Log.d("ProxySetup", "Proxy set to $proxy:$port")
+                } else {
+                    Log.d("ProxySetup", "No proxy settings found in APN")
+                }
+            }
+        }
+    } catch (e: Exception) {
+        Log.e("ProxySetup", "Failed to set proxy from APN: ${e.message}")
+    }
+}
