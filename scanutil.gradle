@@ -1,18 +1,44 @@
-/*
- * © 2021 Infosys Limited, Bangalore, India. All Rights Reserved.
- * Version:1.0.0.0
- *
- * Except for any free or open source software components
- * embedded in this Infosys proprietary software program (“Live Enterprise Employee Experience Interaction Suite”),
- * this Program is protected by copyright laws, international treaties
- * and other pending or existing intellectual property rights in India,
- * the United States and other countries. Except as expressly permitted,
- * any unauthorized reproduction, storage, transmission in any form or
- * by any means (including without limitation electronic, mechanical,
- * printing, photocopying, recording or otherwise), or any distribution
- * of this Program, or any portion of it, may result in severe civil and criminal
- * penalties, and will be prosecuted to the maximum extent possible under the law.
- */
+subprojects { project ->
+    def exclusions = getExcludeModulesToScan()
+    if (!exclusions.contains(project.name)) {
+        project.plugins.withId("com.android.application") {
+            configureJacoco(project)
+        }
+        project.plugins.withId("com.android.library") {
+            configureJacoco(project)
+        }
+    }
+}
+
+def configureJacoco(Project project) {
+    project.apply plugin: "jacoco"
+
+    project.jacoco {
+        toolVersion = "0.8.10"
+    }
+
+    project.afterEvaluate {
+        tasks.withType(Test).configureEach {
+            jacoco.includeNoLocationClasses = false
+        }
+
+        def android = project.extensions.getByName("android")
+
+        def buildTypes = android.buildTypes.collect { type -> type.name }
+        def productFlavors = android.productFlavors.collect { flavor -> flavor.name }
+
+        if (!productFlavors) productFlavors.add("")
+
+        productFlavors.each { productFlavorName ->
+            buildTypes.each { buildTypeName ->
+                def sourceName = productFlavorName ? "${productFlavorName}${buildTypeName.capitalize()}" : buildTypeName
+                def testTaskName = "test${sourceName.capitalize()}UnitTest"
+                println("Task -> $testTaskName")
+                // Add Jacoco reporting logic if needed
+            }
+        }
+    }
+}
 
 def getExcludeModulesToScan() {
     def propsFile = rootProject.file('scan.properties')
