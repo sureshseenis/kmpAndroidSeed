@@ -1,0 +1,144 @@
+/*
+ * © 2021 Infosys Limited, Bangalore, India. All Rights Reserved.
+ * Version:1.0.0.0
+ *
+ * Except for any free or open source software components
+ * embedded in this Infosys proprietary software program (“Live Enterprise Employee Experience Interaction Suite”),
+ * this Program is protected by copyright laws, international treaties
+ * and other pending or existing intellectual property rights in India,
+ * the United States and other countries. Except as expressly permitted,
+ * any unauthorized reproduction, storage, transmission in any form or
+ * by any means (including without limitation electronic, mechanical,
+ * printing, photocopying, recording or otherwise), or any distribution
+ * of this Program, or any portion of it, may result in severe civil and criminal
+ * penalties, and will be prosecuted to the maximum extent possible under the law.
+ */
+
+apply from: "$project.rootDir/scanutil.gradle"
+
+subprojects {
+    def exclusions = getExcludeModulesToScan()
+    if (!exclusions.contains(it.name)) {
+        apply plugin: "jacoco"
+        jacoco {
+            toolVersion = "0.8.7"
+        }
+        afterEvaluate { project ->
+            tasks.withType(Test).configureEach {
+                jacoco.includeNoLocationClasses false
+            }
+
+            def buildTypes = android.buildTypes.collect { type ->
+                type.name
+            }
+            def productFlavors = android.productFlavors.collect { flavor ->
+                flavor.name
+            }
+
+            if (!productFlavors) productFlavors.add('')
+            productFlavors.each { productFlavorName ->
+                buildTypes.each { buildTypeName ->
+                    def sourceName
+                    if (!productFlavorName) {
+                        sourceName = "${buildTypeName}"
+                    } else {
+                        sourceName = "${productFlavorName}${buildTypeName.capitalize()}"
+                    }
+                    def testTaskName = "test${sourceName.capitalize()}UnitTest"
+                    System.out.println("Task -> $testTaskName")
+
+                    //Crating new task for different flavors
+                    task "${testTaskName}Coverage"(type: JacocoReport, dependsOn: "$testTaskName") {
+                        group = "Reporting"
+                        description = "Generate Jacoco coverage reports on the ${sourceName.capitalize()} build."
+
+                        def fileFilter = [
+                                // data binding
+                                'android/databinding/**/*.class',
+                                '**/android/databinding/*Binding.class',
+                                '**/android/databinding/*',
+                                '**/androidx/databinding/*',
+                                '**/BR.*',
+                                // android
+                                '**/R.class',
+                                '**/R$*.class',
+                                '**/BuildConfig.*',
+                                '**/Manifest*.*',
+                                '**/*Test*.*',
+                                'android/**/*.*',
+                                // dagger
+                                '**/*_MembersInjector.class',
+                                '**/Dagger*Component.class',
+                                '**/Dagger*Component$Builder.class',
+                                '**/Dagger*Subcomponent*.class',
+                                '**/*Subcomponent$Builder.class',
+                                '**/*Module_*Factory.class',
+                                '**/di/module/*',
+                                '**/*_Factory*.*',
+                                '**/*Module*.*',
+                                '**/*Dagger*.*',
+                                '**/*Hilt*.*',
+                                // kotlin
+                                '**/*MapperImpl*.*',
+                                '**/*$ViewInjector*.*',
+                                '**/*$ViewBinder*.*',
+                                '**/BuildConfig.*',
+                                '**/*Component*.*',
+                                '**/*BR*.*',
+                                '**/Manifest*.*',
+                                '**/*$Lambda$*.*',
+                                '**/*Companion*.*',
+                                '**/*Module*.*',
+                                '**/*Dagger*.*',
+                                '**/*Hilt*.*',
+                                '**/*MembersInjector*.*',
+                                '**/*_MembersInjector.class',
+                                '**/*_Factory*.*',
+                                '**/*_Provide*Factory*.*',
+                                '**/*Extensions*.*',
+                                // sealed and data classes
+                                '**/*$Result.*',
+                                '**/*$Result$*.*',
+                                '**/*JsonAdapter.*',
+                                '**/*RepositoryMockImpl.*',
+                                '**/*Constants.*',
+                                '**/*Request.*',
+                                '**/*Response.*',
+                                '**/constants/**',
+                                '**/core/ui/**'
+                        ]
+
+                        def javaTree = fileTree(dir: "${project.buildDir}/intermediates/javac/$sourceName/classes", excludes: fileFilter)
+                        def kotlinTree = fileTree(dir: "${project.buildDir}/tmp/kotlin-classes/$sourceName", excludes: fileFilter)
+                        classDirectories.from = files([javaTree], [kotlinTree])
+
+                        def androidTestsData = fileTree(dir: layout.buildDirectory.dir("outputs/code_coverage/devDebugAndroidTest/connected").get().asFile, includes: ["**/*.ec"])
+                        executionData(files([
+                                "$project.buildDir/outputs/unit_test_code_coverage/devDebugUnitTest/testDevDebugUnitTest.exec",
+                                androidTestsData
+                        ]))
+
+                        def coverageSourceDirs = ["src/main/java",
+                                                  "src/$productFlavorName/java",
+                                                  "src/$buildTypeName/java"]
+
+                        sourceDirectories.setFrom(files(coverageSourceDirs))
+                        additionalSourceDirs.setFrom(files(coverageSourceDirs))
+
+                        reports {
+                            csv.required = false
+                            xml {
+                                required = true
+                                destination file(layout.buildDirectory.file("xml-coverage-report.xml"))
+                            }
+                            html {
+                                required = true
+                                destination file(layout.buildDirectory.file("xcoverage-report"))
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
