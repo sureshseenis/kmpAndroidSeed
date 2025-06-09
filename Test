@@ -28,3 +28,36 @@ fun configureProxyFromApn(context: Context) {
         Log.e("ProxySetup", "Failed to set proxy from APN: ${e.message}")
     }
 }
+productFlavors.each { productFlavorName ->
+    buildTypes.each { buildTypeName ->
+        def sourceName = productFlavorName ? "${productFlavorName}${buildTypeName.capitalize()}" : buildTypeName
+        def testTaskName = "test${sourceName.capitalize()}UnitTest"
+        def coverageTaskName = "${testTaskName}Coverage"
+
+        println("Checking/Creating task: $coverageTaskName")
+
+        if (tasks.findByName(coverageTaskName) == null) {
+            tasks.register(coverageTaskName, JacocoReport) {
+                dependsOn testTaskName
+                group = "Reporting"
+                description = "Generate Jacoco coverage report for $sourceName"
+
+                def fileFilter = [
+                    '**/android/databinding/**/*.*',
+                    '**/BR.*',
+                    '**/R.class',
+                    '**/R$*.class',
+                    '**/BuildConfig.*',
+                    '**/Manifest*.*',
+                    '**/*Test*.*',
+                    'android/**/*.*',
+                    '**/*$[0-9].class'
+                ]
+
+                // continue with Jacoco config (e.g. classDirectories, sourceDirectories, executionData)
+            }
+        } else {
+            println("Skipping duplicate task: $coverageTaskName")
+        }
+    }
+}
