@@ -1,0 +1,23 @@
+Summary,Description,Acceptance Criteria,Timebox,Labels
+[SPIKE] Investigate how to load a single large image using MapView,Research how to configure MapView to load a single image without repetition or tile issues.,"- Image loads without repetition
+- Zoom and pan works correctly",0.5 day,"spike, mapview, image"
+[SPIKE] Evaluate memory impact of loading large images as single tile,Test different image sizes to evaluate memory usage and identify device limits.,"- Memory usage logged
+- Identify safe image dimensions",1 day,"spike, mapview, performance"
+"[SPIKE] Determine how to detect (x, y) coordinates from touch events","Explore how to convert screen touch coordinates to image-space (x,y) in MapView.","- Touch returns accurate x,y on the image
+- Works across zoom/pan",0.5 day,"spike, mapview, touch"
+"[SPIKE] Explore how to map (x, y) coordinates to seat IDs",Prototype how to identify which seat is tapped based on known seat coordinates.,"- Basic matching logic for seat detection
+- Log seat ID if tapped",1 day,"spike, seatbooking"
+[SPIKE] Investigate marker rendering at image coordinates,"Test adding markers (seat indicators) at various x,y coordinates in MapView.","- Markers render at correct positions
+- Multiple markers supported",0.5 day,"spike, mapview, markers"
+[SPIKE] Design seat selection visuals using custom markers,Explore UI designs for selected/booked/available seat markers.,"- Different visuals for selected/booked
+- Custom view markers working",1 day,"spike, ui, seatbooking"
+[SPIKE] Explore best UX for zoom/scale limits on seat maps,Determine optimal zoom levels for usability and performance.,"- Zoom constraints applied
+- Seat still tappable and visible",0.5 day,"spike, ux, mapview"
+[SPIKE] Investigate how to sync booked seat data from backend,Test syncing seat statuses from a JSON API and update map view accordingly.,"- Load and render booked seats
+- Data reflects backend response",1 day,"spike, backend, seatbooking"
+[SPIKE] Explore how to manage selected seats in memory (multi-select),Prototype logic for tracking multiple selected seats and updating UI.,"- Multiple seats selectable
+- Toggle selected state",0.5 day,"spike, logic, seatbooking"
+[SPIKE] Evaluate splitting large seat map into tiles,"Research tools (Zoomify, gdal2tiles) to split a large image for tiled loading.","- Split image into tiles
+- Load with MapView as tiles",1 day,"spike, tiling, mapview"
+[SPIKE] Feasibility of migrating to MapCompose for Jetpack Compose UI,Compare MapView with MapCompose for Compose-native integration.,"- Test MapCompose rendering
+- Compare gesture & marker support",1 day,"spike, compose, mapview"
